@@ -9,7 +9,7 @@ from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, User
-#from models import Person
+from models import Characters
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -25,7 +25,18 @@ setup_admin(app)
 def handle_invalid_usage(error):
     return jsonify(error.to_dict()), error.status_code
 
-# generate sitemap with all your endpoints
+@app.route('/characters', methods=['POST'])
+def create_characters():
+    name = request.json['name']
+    height = request.json['height']
+    weight = request.json['weight']
+
+    new_character = Characters(name, height, weight)
+    db.session.add(new_character)
+    db.session.commit()
+
+    return 'Character created sucessfully'
+
 @app.route('/')
 def sitemap():
     return generate_sitemap(app)

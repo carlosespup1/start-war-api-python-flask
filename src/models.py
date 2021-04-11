@@ -25,6 +25,11 @@ class Characters(db.Model):
     weight = db.Column(db.Integer)
     height = db.Column(db.Integer)
 
+    def __init__(self, name, weight, height):
+        self.name = name
+        self.weight = weight
+        self.height = height
+
 class Planets(db.Model):
     idPlanet = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(40), nullable=False)
