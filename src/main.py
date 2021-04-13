@@ -35,12 +35,12 @@ def create_token():
     email = request.json.get('email', None)
     password = request.json.get('password', None)
 
-    user = db.session.query(User).filter(User.username==username, User.password==password).first()
+    user = db.session.query(User).filter(User.email==email, User.password==password).first()
     if User is None:
         return jsonify({"msg": "Bad username or password"}), 401
     
-    access_token = create_access_token(identity=user.id)
-    return jsonify({ "token": access_token, "user_id": user.id })
+    access_token = create_access_token(identity=user.userId)
+    return jsonify({ "token": access_token, "user_id": user.userId })
 
 @app.route('/user', methods=['POST'])
 def create_user():
