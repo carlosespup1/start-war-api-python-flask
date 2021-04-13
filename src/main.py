@@ -11,10 +11,15 @@ from admin import setup_admin
 from models import db, User
 from models import Characters
 
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import JWTManager
+
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_CONNECTION_STRING')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config["JWT_SECRET_KEY"] = "super-secret"  
+jwt = JWTManager(app)
 MIGRATE = Migrate(app, db)
 db.init_app(app)
 CORS(app)
@@ -25,7 +30,30 @@ setup_admin(app)
 def handle_invalid_usage(error):
     return jsonify(error.to_dict()), error.status_code
 
-@app.route('/characters', methods=['POST'])
+@app.route('/token', methods=['POST'])
+def create_token():
+    email = request.json.get('email', None)
+    password = request.json.get('password', None)
+
+    user = db.session.query(User).filter(User.username==username, User.password==password).first()
+    if User is None:
+        return jsonify({"msg": "Bad username or password"}), 401
+    
+    access_token = create_access_token(identity=user.id)
+    return jsonify({ "token": access_token, "user_id": user.id })
+
+@app.route('/user', methods=['POST'])
+def create_user():
+    email = request.json['email']
+    password = request.json['password']
+    is_active = request.json['is_active']
+    
+    new_user = User(email, password, is_active)
+    db.session.add(new_user)
+    db.session.commit()
+    return 'New user created succesfully'
+
+@app.route('/characters/create', methods=['POST'])
 def create_characters():
     name = request.json['name']
     height = request.json['height']
