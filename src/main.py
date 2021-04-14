@@ -73,9 +73,17 @@ def create_characters():
 
     return 'Character created sucessfully'
 
+@app.route('/planets/create', methods=['POST'])
+def create_planets():
+    return 'create planet'
+
 @app.route('/characters', methods=['GET'])
 def get_characters():
-    return 'hello'
+    return 'characters'
+
+@app.route('/planets', methods=['GET'])
+def get_planets():
+    return 'planets'
 
 @app.route('/')
 def sitemap():
