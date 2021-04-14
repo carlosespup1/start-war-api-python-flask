@@ -1,6 +1,3 @@
-"""
-This module takes care of starting the API Server, Loading the DB and Adding the endpoints
-"""
 import os
 from flask import Flask, request, jsonify, url_for
 from flask_migrate import Migrate
@@ -53,7 +50,6 @@ def protected():
     user = User.query.get(current_user_id)
     return jsonify({"id": user.userId, "username": user.email }), 200
 
-
 @app.route('/user', methods=['POST'])
 def create_user():
     email = request.json['email']
@@ -76,6 +72,11 @@ def create_characters():
     db.session.commit()
 
     return 'Character created sucessfully'
+
+@app.route('/characters', methods=['GET'])
+def get_characters():
+    characters_data = db.session.query(Characters).all()
+    return jsonify(characters_data)
 
 @app.route('/')
 def sitemap():
