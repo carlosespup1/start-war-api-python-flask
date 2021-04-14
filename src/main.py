@@ -75,8 +75,7 @@ def create_characters():
 
 @app.route('/characters', methods=['GET'])
 def get_characters():
-    characters_data = db.session.query(Characters).all()
-    return jsonify(characters_data)
+    return 'hello'
 
 @app.route('/')
 def sitemap():
