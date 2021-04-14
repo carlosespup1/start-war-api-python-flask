@@ -12,6 +12,7 @@ from models import db, User
 from models import Characters
 
 from flask_jwt_extended import create_access_token
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_jwt_extended import JWTManager
 
 app = Flask(__name__)
@@ -37,10 +38,21 @@ def create_token():
 
     user = db.session.query(User).filter(User.email==email, User.password==password).first()
     if User is None:
-        return jsonify({"msg": "Bad username or password"}), 401
+        return jsonify({'message': 'email or password wrong'}), 401
     
-    access_token = create_access_token(identity=user.userId)
-    return jsonify({ "token": access_token, "user_id": user.userId })
+    access_token = create_access_token(identity=user.userId) 
+    return jsonify(
+        {
+        'token': access_token, 'user id': user.userId
+        })
+
+@app.route('/protected', methods=['GET'])
+@jwt_required()
+def protected():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    return jsonify({"id": user.userId, "username": user.email }), 200
+
 
 @app.route('/user', methods=['POST'])
 def create_user():
