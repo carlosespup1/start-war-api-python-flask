@@ -1,12 +1,14 @@
 import os
+import json
 from flask import Flask, request, jsonify, url_for
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User
+from models import db, ma, User
 from models import Characters
+from models import ChracterSchema
 
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -20,6 +22,7 @@ app.config["JWT_SECRET_KEY"] = "super-secret"
 jwt = JWTManager(app)
 MIGRATE = Migrate(app, db)
 db.init_app(app)
+ma.init_app(app)
 CORS(app)
 setup_admin(app)
 
@@ -79,11 +82,11 @@ def create_planets():
 
 @app.route('/characters', methods=['GET'])
 def get_characters():
-    return 'characters'
+    characters_all = Characters.query.all()
+    characters_schema = ChracterSchema(many=True)
+    output = characters_schema.dump(characters_all)
+    return jsonify(output)
 
-@app.route('/planets', methods=['GET'])
-def get_planets():
-    return 'planets'
 
 @app.route('/')
 def sitemap():

@@ -1,7 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, ForeignKey, Integer, String, Boolean, Float
+from flask_marshmallow import Marshmallow
 
 db = SQLAlchemy()
+ma = Marshmallow()
 
 class User(db.Model):
     userId = db.Column(db.Integer, primary_key=True)
@@ -47,3 +49,10 @@ class Favorities(db.Model):
     userId = db.Column(ForeignKey(User.userId))
     planetId = db.Column(ForeignKey(Planets.idPlanet))
     characterId = db.Column(ForeignKey(Characters.idCharacter))
+
+
+# Schemas
+
+class ChracterSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Characters
