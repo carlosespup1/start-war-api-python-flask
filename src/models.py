@@ -44,6 +44,11 @@ class Planets(db.Model):
     Population = db.Column(db.Integer)
     sizeKm = db.Column(db.Float)
 
+    def __init__(self, name, Population, sizeKm):
+        self.name = name
+        self.Population = Population
+        self.sizeKm = sizeKm
+
 class Favorities(db.Model):
     favoriteId = db.Column(db.Integer, primary_key=True)
     userId = db.Column(ForeignKey(User.userId))
@@ -51,8 +56,11 @@ class Favorities(db.Model):
     characterId = db.Column(ForeignKey(Characters.idCharacter))
 
 
-# Schemas
-
-class ChracterSchema(ma.SQLAlchemyAutoSchema):
+# Database Schemas
+class CharacterSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Characters
+
+class PlanetSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Planets
