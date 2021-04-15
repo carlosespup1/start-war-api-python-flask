@@ -7,8 +7,8 @@ from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, ma, User
-from models import Characters
-from models import ChracterSchema
+from models import Characters, Planets
+from models import CharacterSchema, PlanetSchema
 
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -78,15 +78,29 @@ def create_characters():
 
 @app.route('/planets/create', methods=['POST'])
 def create_planets():
-    return 'create planet'
+    name = request.json['name']
+    population = request.json['population']
+    sizeKm = request.json['sizeKm']
+
+    new_planet = Planets(name, population, sizeKm)
+    db.session.add(new_planet)
+    db.session.commit()
+
+    return 'Planets created succesfully'
 
 @app.route('/characters', methods=['GET'])
 def get_characters():
     characters_all = Characters.query.all()
-    characters_schema = ChracterSchema(many=True)
+    characters_schema = CharacterSchema(many=True)
     output = characters_schema.dump(characters_all)
     return jsonify(output)
 
+@app.route('/planets', methods=['GET'])
+def get_planets():
+    planets_all = Planets.query.all()
+    planets_schema = PlanetSchema(many=True)
+    output = planets_schema.dump(planets_all)
+    return jsonify(output)
 
 @app.route('/')
 def sitemap():
