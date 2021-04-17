@@ -51,10 +51,14 @@ class Planets(db.Model):
 
 class Favorities(db.Model):
     favoriteId = db.Column(db.Integer, primary_key=True)
-    userId = db.Column(ForeignKey(User.userId))
-    planetId = db.Column(ForeignKey(Planets.idPlanet))
-    characterId = db.Column(ForeignKey(Characters.idCharacter))
+    userId = db.Column(db.Integer, ForeignKey(User.userId))
+    planetId = db.Column(db.Integer, ForeignKey(Planets.idPlanet))
+    characterId = db.Column(db.Integer, ForeignKey(Characters.idCharacter))
 
+    def __init__(self, userId, planetId, characterId):
+        self.userId = userId
+        self.planetId = planetId
+        self.characterId = characterId
 
 # Database Schemas
 class CharacterSchema(ma.SQLAlchemyAutoSchema):
@@ -64,3 +68,7 @@ class CharacterSchema(ma.SQLAlchemyAutoSchema):
 class PlanetSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Planets
+
+class FavoritiesSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Favorities

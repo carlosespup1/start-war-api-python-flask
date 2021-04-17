@@ -7,8 +7,8 @@ from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, ma, User
-from models import Characters, Planets
-from models import CharacterSchema, PlanetSchema
+from models import Characters, Planets, Favorities
+from models import CharacterSchema, PlanetSchema, FavoritiesSchema
 
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -88,6 +88,13 @@ def create_planets():
 
     return 'Planets created succesfully'
 
+@app.route('/characters/<int:id>', methods=['GET'])
+def get_character(id):
+    character = Characters.query.get(id)
+    characters_schema = CharacterSchema()
+    output = characters_schema.dump(character)
+    return jsonify(output)
+
 @app.route('/characters', methods=['GET'])
 def get_characters():
     characters_all = Characters.query.all()
@@ -95,11 +102,36 @@ def get_characters():
     output = characters_schema.dump(characters_all)
     return jsonify(output)
 
+@app.route('/planets/<int:id>', methods=['GET'])
+def get_planet(id):
+    planet = Planets.query.get(id)
+    planet_schema = PlanetSchema()
+    output = planet_schema.dump(planet)
+    return jsonify(output)
+
 @app.route('/planets', methods=['GET'])
 def get_planets():
     planets_all = Planets.query.all()
     planets_schema = PlanetSchema(many=True)
     output = planets_schema.dump(planets_all)
+    return jsonify(output)
+
+@app.route('/favoritie/create', methods=['POST'])
+def add_favorite():
+    userId = request.json['userId']
+    planetId = request.json['planetId']
+    characterId = request.json['characterId']
+
+    new_favoritie = Favorities(userId, planetId, characterId)
+    db.session.add(new_favoritie)
+    db.session.commit()
+    return 'New Favorite added successfully'
+
+@app.route('/favorities', methods=['GET'])
+def get_favorities():
+    favorities_all = Favorities.query.all()
+    favorities_schema = FavoritiesSchema(many=True)
+    output = favorities_schema.dump(favorities_all)
     return jsonify(output)
 
 @app.route('/')
