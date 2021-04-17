@@ -51,9 +51,9 @@ class Planets(db.Model):
 
 class Favorities(db.Model):
     favoriteId = db.Column(db.Integer, primary_key=True)
-    userId = db.Column(db.Integer, ForeignKey(User.userId))
-    planetId = db.Column(db.Integer, ForeignKey(Planets.idPlanet))
-    characterId = db.Column(db.Integer, ForeignKey(Characters.idCharacter))
+    userId = db.Column(db.Integer)
+    planetId = db.Column(db.Integer)
+    characterId = db.Column(db.Integer)
 
     def __init__(self, userId, planetId, characterId):
         self.userId = userId
